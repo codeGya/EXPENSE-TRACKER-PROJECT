@@ -34,7 +34,9 @@ async function saveDailyExpensesToBackend()
       
    // 
 
-    const waitForPostingToBackend=await axios.post('http://localhost:3000/dailyexpenses-user',expenses,config)
+    const waitForPostingToBackend=await axios.post('http://54.250.204.251:3000/dailyexpenses-user',expenses,config)
+
+    console.log(waitForPostingToBackend,'waitForPostingToBackend')
     
     //console.log(waitForPostingToBackend,'i want to get data')
     document.getElementById('expenses').innerHTML=document.getElementById('expenses').innerHTML+`<li id=${waitForPostingToBackend.data.id}>Description-${waitForPostingToBackend.data.description} Rs Spend-${waitForPostingToBackend.data.spend} Details-${waitForPostingToBackend.data.variety}<input type=button onclick=deleteUserFromBackend("${waitForPostingToBackend.data.id}") value=DELETE></li>`
@@ -49,7 +51,7 @@ async function deleteUserFromBackend(a)
 
     }
     
-    const waitForDeletion=await axios.delete(`http://localhost:3000/delete-user/${a}`,config)
+    const waitForDeletion=await axios.delete(`http://54.250.204.251:3000/delete-user/${a}`,config)
 
     document.getElementById('expenses').removeChild(document.getElementById(a))
     //
@@ -70,18 +72,21 @@ async function displayAfterRefreshingPage(e){
     const pagination=localStorage.getItem('pagination')
     
 
-   const waitForGettingUserDataFromBackend=await axios.get('http://localhost:3000/get-user/?page=${page}',config)
+   const waitForGettingUserDataFromBackend=await axios.get(`http://54.250.204.251:3000/get-user/?page=${page}`,config)
     console.log(waitForGettingUserDataFromBackend,'after applying query page')
     let output=""
 
-    for(let i=0;i<waitForGettingUserDataFromBackend.data.length;i=i+1)
+    for(let i=0;i<waitForGettingUserDataFromBackend.data.data.length;i=i+1)
     {
-        output=output+`<li id=${waitForGettingUserDataFromBackend.data[i].id}>Description-${waitForGettingUserDataFromBackend.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data[i].spend} Details-${waitForGettingUserDataFromBackend.data[i].variety}
-        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data[i].id}") value=DELETE></li>`
+        output=output+`<li id=${waitForGettingUserDataFromBackend.data.data[i].id}>Description-${waitForGettingUserDataFromBackend.data.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data.data[i].spend} Details-${waitForGettingUserDataFromBackend.data.data[i].variety}
+        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data.data[i].id}") value=DELETE></li>`
 
 
     }
+    
     document.getElementById('oldexpenses').innerHTML=output
+
+    paginationFunctionAfterRefreshing( waitForGettingUserDataFromBackend.data.key)
 
 
 
@@ -95,7 +100,7 @@ async function deleteUserFromBackendAfterRefreshingPage(a)
           }
 
     }
-    const waitForDeletion=await axios.delete(`http://localhost:3000/delete-user/${a}`,config)
+    const waitForDeletion=await axios.delete(`http://54.250.204.251:3000/delete-user/${a}`,config)
 
     document.getElementById('oldexpenses').removeChild(document.getElementById(a))
 
@@ -120,7 +125,7 @@ async function sendPremiumAccountDetails()
     }
         
 
-   const waitForId=await axios.post('http://localhost:3000/buy-premium',options,config)
+   const waitForId=await axios.post('http://54.250.204.251:3000/buy-premium',options,config)
    console.log(waitForId.data,waitForId.status,'wait for order id creation')
    if(waitForId.status===200)
    {
@@ -141,7 +146,7 @@ async function sendPremiumAccountDetails()
     order_id:`${localStorage.getItem('id')}`,
     handler: async function (response){
         console.log(response,'i am response')
-        await axios.post('http://localhost:3000/save/premium',information,config)
+        await axios.post('http://54.250.204.251:3000/save/premium',information,config)
         document.body.style.backgroundColor = "red";
         alert('Transaction Successful')
         
@@ -262,14 +267,17 @@ async function checkWhetherPremiumOrNot()
           }
 
     }
-    const waitForGettingPremiumDetails=await axios.get('http://localhost:3000/get/premium/details',config)
-    console.log(waitForGettingPremiumDetails)
+    const waitForGettingPremiumDetails=await axios.get('http://54.250.204.251:3000/get/premium/details',config)
+    //console.log(waitForGettingPremiumDetails)
 
     if(waitForGettingPremiumDetails.status===200)
     {
         document.body.style.backgroundColor = "red";
         document.getElementById('premium').innerHTML=`<input type="button"  value="LEADERBOARD" onclick="getLeaderBoard()">`
-        document.getElementById('getOneUserData').innerHTML=`<li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("daily") value=DAILY></li>  <li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("weekly") value=WEEKLY></li><li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("monthly") value=MONTHLY></li>`
+        document.getElementById('getOneUserData').innerHTML=`</li>  <li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("weekly") value=WEEKLY>`
+        document.getElementById('download').innerHTML=`<li><input type=button onclick=getDownloadFileUrl() value=DOWNLOAD>`
+        document.getElementById('downloadparticular').innerHTML=`<li><input type=button onclick=getAllFileUrl() value=DOWNLOADFILEURLS>`
+
 
 
     }
@@ -298,7 +306,7 @@ async function getLeaderBoard()
     // if(waitForGettingPremiumDetails.status===200)
     // {
 
-        const waitForGettingAllUserDetails=await axios.get('http://localhost:3000/get/all/user',config)
+        const waitForGettingAllUserDetails=await axios.get('http://54.250.204.251:3000/get/all/user',config)
         let output=""
         for(let i=0;i<waitForGettingAllUserDetails.data.length;i=i+1)
         {
@@ -325,7 +333,7 @@ async function getDataOfThatParticularPerson(a)
     }
 
 
-    const getDataOfThatParticularPerson=await axios.get(`http://localhost:3000/one/particular/user/${a}`,config)
+    const getDataOfThatParticularPerson=await axios.get(`http://54.250.204.251:3000/one/particular/user/${a}`,config)
     console.log(getDataOfThatParticularPerson)
     let output=""
     for(let i=0;i<getDataOfThatParticularPerson.data.length;i=i+1)
@@ -349,7 +357,101 @@ async function getDataOfPremiumMemberForParticularDuration(a)
     }
 
 
-    const userDataForParticularDuration=await axios.get(`http://localhost:3000/particular/data/${a}`,config)
+    const userDataForParticularDuration=await axios.get(`http://54.250.204.251:3000/particular/data/${a}`,config)
+    console.log(userDataForParticularDuration,'userDataForParticularDuration')
+    let output=""
 
+    for(let i=0;i<userDataForParticularDuration.data.length;i=i+1)
+    {
+        output=output+`<li id=${userDataForParticularDuration.data[i].id}> Spend of ${userDataForParticularDuration.data[i].createdAt} => Description-${userDataForParticularDuration.data[i].description} Rs Spend-${userDataForParticularDuration.data[i].spend} Details-${userDataForParticularDuration.data[i].variety}</li>`
+
+
+    }
+    document.getElementById('particularDuration').innerHTML=output
+
+
+}
+
+//document.getElementById('downloadfile').addEventListener('click',getDownloadFileUrl)
+
+async function getDownloadFileUrl()
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+    const waitForGettingUserFileData=await axios.get('http://54.250.204.251:3000/get/file/url',config)
+    if(waitForGettingUserFileData.status===200)
+    {
+        window.location.href=`${waitForGettingUserFileData.data}`
+    }
+
+}
+
+async function getAllFileUrl()
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+    const waitForGettingUserFileData=await axios.get('http://54.250.204.251:3000/get/file/all/url',config)
+    //const waitForGettingUserFileData=await axios.get('http://localhost:3000/get/file/all/url',config)
+    console.log( waitForGettingUserFileData,' waitForGettingUserFileData')
+    
+    let output=""
+    for(let i=0;i<waitForGettingUserFileData.data.length;i=i+1)
+    {
+        output=output+`<li id=${waitForGettingUserFileData.data[i].id}>File Urls-${waitForGettingUserFileData.data[i].fileurl}</li>`
+
+
+    }
+    
+    document.getElementById('getFileUrls').innerHTML=output
+
+}
+
+async function paginationFunctionAfterRefreshing(a)
+{
+
+    if(a.hasNextPage && a.hasLastPage && a.hasNextPage!=a.hasLastPage)
+    {
+        document.getElementById('buttonsofoldexpenses').innerHTML=`<input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>`
+    }
+    if(a.hasNextPage && a.hasLastPage && a.hasNextPage===a.hasLastPage)
+    {
+        document.getElementById('buttonsofoldexpenses').innerHTML=`<input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>  <input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>`
+
+    }
+
+}
+
+async function getDataOfParticularPage(a)
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+
+    const waitForGettingUserDataFromBackend=await axios.get(`http://54.250.204.251:3000/get-user/?page=${a}`,config)
+
+    let output=""
+
+    for(let i=0;i<waitForGettingUserDataFromBackend.data.data.length;i=i+1)
+    {
+        output=output+`<li id=${waitForGettingUserDataFromBackend.data.data[i].id}>Description-${waitForGettingUserDataFromBackend.data.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data.data[i].spend} Details-${waitForGettingUserDataFromBackend.data.data[i].variety}
+        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data.data[i].id}") value=DELETE></li>`
+
+
+    }
+    document.getElementById('oldexpenses').innerHTML=output
+    paginationFunctionAfterRefreshing(waitForGettingUserDataFromBackend.data.key)
+
+    
 
 }

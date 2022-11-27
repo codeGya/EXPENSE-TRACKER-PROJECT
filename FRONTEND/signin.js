@@ -12,8 +12,8 @@ async function signInPageForUsers(e)
         email:email,
         password:password
     }
-    const waitForLoggingIn=await axios.post('http://localhost:3000/sign-user',userTable)
-    //console.log(waitForLoggingIn,'i want to generate token')
+    const waitForLoggingIn=await axios.post('http://54.250.204.251:3000/sign-user',userTable)
+   console.log(waitForLoggingIn,'i want to generate token')
     //if()
     console.log(waitForLoggingIn)
     if(waitForLoggingIn.status===200)
@@ -28,11 +28,15 @@ async function signInPageForUsers(e)
     }
     
     
-    if(waitForLoggingIn.status===400){
-        console.log(waitForLoggingIn)
-        console.log('password is incorrect')
+    if(waitForLoggingIn.status===204){
+        
+        window.alert('password is incorrect')
 
-        document.getElementById('old').innerHTML=`<li>${waitForLoggingIn.data}</li>`
+        //document.getElementById('old').innerHTML=`<li>${waitForLoggingIn.data}</li>`
+    }
+    if(waitForLoggingIn.status===205)
+    {
+        window.alert('No such Email Id')
     }
 
     

@@ -15,13 +15,13 @@ async function resetForgotPassword(e)
         email:document.getElementById('email').value
     }
 
-    const waitForSendingToBackend=await axios.post('http://localhost:3000/password/forgotpassword',email)
+    const waitForSendingToBackend=await axios.post('http://54.250.204.251:3000/password/forgotpassword',email)
     console.log(waitForSendingToBackend,'hey i want to find unique id')
     if(waitForSendingToBackend.status===200)
     {
         console.log(waitForSendingToBackend.data,'hey hello')
         console.log('hehe hello')
-        const waitForResetingPassword=await axios.get(`http://localhost:3000/reset/password/${waitForSendingToBackend.data}`)
+        const waitForResetingPassword=await axios.get(`http://54.250.204.251:3000/reset/password/${waitForSendingToBackend.data}`)
         if(waitForResetingPassword.status===200)
         {
             window.location.href='./reset.html'
