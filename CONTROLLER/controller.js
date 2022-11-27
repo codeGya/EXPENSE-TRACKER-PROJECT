@@ -261,6 +261,109 @@ exports.getDataOfOneParticularPersonFromDataBase=async (req,res,next)=>{
 
 // }
 
+exports.getDataOfParticularDuration=async (req,res,next)=>{
+    //const date=new Date().toLocaleDateString()
+
+    const year=new Date().getFullYear()
+    const date=new Date().getDate()
+    const month=new Date().getMonth()+1
+
+    const duration=req.params.duration
+
+     
+    if(duration==='weekly')
+    {
+        
+        
+        const presentDate=`${year}-${month}-${date}`
+        const newpresentDate=`${year}-${month}-${date-6}`
+        
+        const daily=await req.user.getExpenses({where:{createdAt:{[Op.lte]:presentDate},createdAt:{[Op.gte]:newpresentDate}}})
+        res.send(daily)
+        console.log(daily,'daily.......')
+
+    }
+    // if(duration===weekly)
+    // {
+    //     const daily=await Expense.findAll({where:{usertableId:req.user.id,createdAt:}})
+
+
+    // }
+
+
+
+
+
+
+}
+
+exports.downloadFileUrl=async (req,res,next)=>{
+    try{
+        const getUserExpenses=await req.user.getExpenses()
+        const JSONstringifieddata=JSON.stringify(getUserExpenses)
+    
+        const filename=`datatrial${req.user.id}/${new Date()}.txt`
+        
+    
+        const waitForPromiseTogetResolved=await fileToUploadToS3(JSONstringifieddata,filename)
+        await req.user.createFileUrl({fileurl:waitForPromiseTogetResolved})
+        res.status(200).send(waitForPromiseTogetResolved)
+
+    }
+    catch(error){
+        res.status(500).send({})
+
+    }
+
+    
+}
+
+async function fileToUploadToS3(a,b)
+{
+    return new Promise((resolve,reject)=>{
+
+        const BUCKET_NAME='expenseofis'
+        const IAM_USER_KEY='AKIA5F6EFI4MAQLYJKW2'
+         const IAM_USER_SECRET='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'
+    
+       const s3bucket=new AWS.S3({
+        accessKeyId:IAM_USER_KEY,
+        secretAccessKey:IAM_USER_SECRET
+    })
+    const params={
+        Bucket:BUCKET_NAME,
+        Key:b,
+        Body:a,
+        ACL:'public-read'
+        
+    }
+
+    s3bucket.upload(params,(err,s3response)=>{
+        if(!err)
+        {
+            resolve(s3response.Location)
+        }
+        else{
+            reject(err)
+        }
+    })
+
+    })
+    
+
+
+
+
+}
+
+exports.getAllfileUrlOfPast=async (req,res,next)=>{
+
+    const getAllUrlsOfPast=await req.user.getFileUrls()
+    res.send(getAllUrlsOfPast)
+}
+
+
+
 
 
 
