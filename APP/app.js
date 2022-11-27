@@ -9,6 +9,7 @@ const User=require('../MODELS/usertable')
 const Expense=require('../MODELS/expensetable')
 const Premium=require('../MODELS/premium.js')
 const ForgotPassword=require('../MODELS/forgotpassword')
+const path=require('path')
 
 User.hasMany(Expense)
 Expense.belongsTo(User)
