@@ -6,6 +6,7 @@ const Razorpay=require('razorpay')
 const ForgotPassword=require('../MODELS/forgotpassword')
 const {v4:uuidv4}=require('uuid')
 const Premium=require('../MODELS/premium.js')
+const Op=require('sequelize')
 
 exports.saveDataOfSignUpToBackend=async (req,res,next)=>{
 
