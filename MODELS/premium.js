@@ -12,7 +12,7 @@ const Premium=sequelize.define('Premium',{
 
         
     },
-    order_id:{
+    ordernumber:{
         type:Sequelize.STRING
 
     }
