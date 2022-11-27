@@ -1,18 +1,25 @@
 const User=require('../MODELS/usertable.js')
+
+const { Op } = require("sequelize")
+const AWS=require('aws-sdk')
+
 const bcrypt=require('bcrypt')
 const Expense=require('../MODELS/expensetable.js')
+
 const jwt=require('jsonwebtoken')
 const Razorpay=require('razorpay')
 const ForgotPassword=require('../MODELS/forgotpassword')
+console.log(ForgotPassword)
 const {v4:uuidv4}=require('uuid')
 const Premium=require('../MODELS/premium.js')
+const FileUrl=require('../MODELS/fileurl.js')
 
 exports.saveDataOfSignUpToBackend=async (req,res,next)=>{
 
     const name=req.body.name
     const email=req.body.email
     const password=req.body.password
-    console.log(req.body,'request body')
+   // console.log(req.body,'request body')
     
     
 
@@ -30,7 +37,7 @@ exports.saveDataOfSignUpToBackend=async (req,res,next)=>{
 
     }
     else{
-        console.log('email is old')
+        //console.log('email is old')
         res.send('User already exists!')
     }
 
@@ -48,9 +55,9 @@ exports.signInAlreadyPresentUser=async (req,res,next)=>{
     {
         // console.log('email is new')
         // await Usertable.create({email:email,name:name,password:password})
-        console.log('EmailId doesnt exist')
+       // console.log('EmailId doesnt exist')
 
-        res.status(400).send('EmailId doesnt exist')
+        res.status(205).send('EmailId doesnt exist')
 
     }
     else if(waitForSearchingDatabase.length>0){
@@ -64,7 +71,7 @@ exports.signInAlreadyPresentUser=async (req,res,next)=>{
             }
             else{
                 console.log('Password is incorrect')
-                res.status(400).send('Password is incorrect')
+                res.status(204).send('Password is incorrect')
             }
         })
     }
@@ -79,6 +86,7 @@ exports.saveDailyExpensesInDataBase=async (req,res,next)=>{
     const user=req.user
 
     const addingDataToBackend=await req.user.createExpense({spend:spend,description:description,variety:variety})
+    //console.log(addingDataToBackend,'addingDataToBackend')
     res.send(addingDataToBackend)
 
 }
@@ -86,28 +94,33 @@ exports.saveDailyExpensesInDataBase=async (req,res,next)=>{
 exports.deleteUser=async (req,res,next)=>{
     const deleteId=req.params.deleteId
 
-    const waitForDeletionFromTable=await req.user.removeExpense(deleteId)
+    const waitForDeletionFromTable=req.user.removeExpense(deleteId)
     res.send({})
 }
 exports.getAllUserDataFromBackend=async (req,res,next)=>{
     const items_per_page=1
     const page=req.query.page
+    console.log(page,'req.query.page')
     //const limit=req.query.limit
     //console.log(limit,'i will give him 10 lakh LIC POLICY')
-    console.log(req.user,'hey i am user in DOMCONTENT LOADED')
+    //console.log(req.user,'hey i am user in DOMCONTENT LOADED')
     //const User=req.user
-    console.log(Expense,'get expenses model of user')
-    const waitForGettingUserDataFromBackend=await req.user.getExpenses()
-    console.log(waitForGettingUserDataFromBackend,'waitForGettingUserDataFromBackend')
+    //console.log(Expense,'get expenses model of user')
+    console.log(page,'page.......................')
+    const waitForGettingUserDataFromBackend=await req.user.getExpenses({offset:(page-1)*items_per_page,limit:2})
+    const waitForGettingUserDataFromBackendToCalculateLength=await req.user.countExpenses()
+    console.log(waitForGettingUserDataFromBackend,'waitForGettingUserDataFromBackend .....')
     res.json({
         data:waitForGettingUserDataFromBackend,
         key:{
         currentPage:+page,
         nextPage:+page+1,
-        hasNextPage:items_per_page*page<waitForGettingUserDataFromBackend,
+        hasNextPage:items_per_page*page<waitForGettingUserDataFromBackendToCalculateLength,
         hasPreviousPage:page>1,
         previousPage:page-1,
-        lastPage:Math.ceil(waitForGettingUserDataFromBackend/items_per_page)}
+        lastPage:Math.ceil(waitForGettingUserDataFromBackendToCalculateLength/items_per_page),
+        hasLastPage:page*items_per_page<waitForGettingUserDataFromBackendToCalculateLength
+        }
 
         
     })
@@ -116,7 +129,7 @@ exports.getAllUserDataFromBackend=async (req,res,next)=>{
    
 }
 exports.premiumMembership=async (req,res,next)=>{
-    const instance = new Razorpay({ key_id:'rzp_test_cDkhQF4p7Khp5w',key_secret:'TZK3f5KaUpccR0aXlvNk0fZX'})
+    const instance = new Razorpay({ key_id:process.env.DB_RAZORPAY_KEY,key_secret:process.env.DB_RAZORPAY_SECRET})
 
     const waitForOrderIdCreation=await instance.orders.create({amount:req.body.amount,currency:req.body.currency},function (err,order){
         if(!err)
@@ -152,7 +165,7 @@ exports.resetForgotPassword=async (req,res,next)=>{
     const waitForCreationOfTable=await ForgotPassword.create({id:uuidv4(),userId:waitForSearchingEmailInDataBase[0].id,isactive:true})
     //const waitForGettingId=await waitForSearchingEmailInDataBase[0].id
    const uuidtobeused=waitForCreationOfTable.id
-   console.log(uuidtobeused,'hey babay')
+   //console.log(uuidtobeused,'hey babay')
     res.status(200).send(waitForCreationOfTable.id)
 
    }
@@ -160,11 +173,11 @@ exports.resetForgotPassword=async (req,res,next)=>{
 exports.resetPassword=async (req,res,next)=>{
 
     const resetId=req.params.resetId
-    console.log(resetId)
+    //console.log(resetId)
    const waitForSearchingDataBase= await ForgotPassword.findAll({where:{id:resetId}})
    if(waitForSearchingDataBase[0].isactive===true)
    {
-      console.log('i am in resetPassword')
+      //console.log('i am in resetPassword')
       await ForgotPassword.update({isactive:false},{where:{id:resetId}})
       res.status(200).send({})
    }
@@ -195,21 +208,21 @@ exports.resetPasswordAfterGettingData=async (req,res,next)=>{
 
 exports.savePremiumDetails=async (req,res,next)=>{
     const order_id=req.body.order_id
-    console.log('hey i reached here into saving premium membership')
-    await req.user.createPremium({order_id:req.body.order_id})
+    //console.log('hey i reached here into saving premium membership')
+    await  req.user.createPremium({order_id:req.body.order_id})
     res.send({})
 }
 exports.checkWhetherPremium=async (req,res,next)=>{
     const waitForPremiumMembers=await Premium.findAll({where:{userId:req.user.id}})
     
-    console.log(waitForPremiumMembers)
+   // console.log(waitForPremiumMembers)
 
     if(waitForPremiumMembers.length===0)
     {
         res.status(400).send({})
-        console.log('i am premium members')
+        console.log('i am not premium members')
     }
-    else{
+    if(waitForPremiumMembers.length>0){
         res.status(200).send({})
     }
 
@@ -231,35 +244,106 @@ exports.getDataOfOneParticularPersonFromDataBase=async (req,res,next)=>{
 
 
 }
-// exports.getDataOfParticularDuration=async (req,res,next)=>{
-//     //const date=new Date().toLocaleDateString()
+exports.getDataOfParticularDuration=async (req,res,next)=>{
+    //const date=new Date().toLocaleDateString()
 
-//     const year=new Date().getFullYear()
-//     const date=new Date().getDate()
-//     const month=new Date().getMonth()+1
+    const year=new Date().getFullYear()
+    const date=new Date().getDate()
+    const month=new Date().getMonth()+1
 
-//     const duration=req.params.duration
+    const duration=req.params.duration
 
-//      const presentDate=`${year}-${month}-${date}`
-//     if(duration===daily)
-//     {
-//         const daily=await Expense.findAll({where:{usertableId:req.user.id,createdAt:presentDate}})
-//         res.send(daily)
+     
+    if(duration==='weekly')
+    {
+        
+        
+        const presentDate=`${year}-${month}-${date}`
+        const newpresentDate=`${year}-${month}-${date-6}`
+        
+        const daily=await req.user.getExpenses({where:{createdAt:{[Op.lte]:presentDate},createdAt:{[Op.gte]:newpresentDate}}})
+        res.send(daily)
+        console.log(daily,'daily.......')
 
-//     }
-//     // if(duration===weekly)
-//     // {
-//     //     const daily=await Expense.findAll({where:{usertableId:req.user.id,createdAt:}})
+    }
+    // if(duration===weekly)
+    // {
+    //     const daily=await Expense.findAll({where:{usertableId:req.user.id,createdAt:}})
 
 
-//     // }
-
-
-
+    // }
 
 
 
-// }
+
+
+
+}
+
+exports.downloadFileUrl=async (req,res,next)=>{
+    try{
+        const getUserExpenses=await req.user.getExpenses()
+        const JSONstringifieddata=JSON.stringify(getUserExpenses)
+    
+        const filename=`datatrial${req.user.id}/${new Date()}.txt`
+        
+    
+        const waitForPromiseTogetResolved=await fileToUploadToS3(JSONstringifieddata,filename)
+        await req.user.createFileUrl({fileurl:waitForPromiseTogetResolved})
+        res.status(200).send(waitForPromiseTogetResolved)
+
+    }
+    catch(error){
+        res.status(500).send({})
+
+    }
+
+    
+}
+
+async function fileToUploadToS3(a,b)
+{
+    return new Promise((resolve,reject)=>{
+
+        const BUCKET_NAME='expenseofis'
+        const IAM_USER_KEY='AKIA5F6EFI4MAQLYJKW2'
+         const IAM_USER_SECRET='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'
+    
+       const s3bucket=new AWS.S3({
+        accessKeyId:IAM_USER_KEY,
+        secretAccessKey:IAM_USER_SECRET
+    })
+    const params={
+        Bucket:BUCKET_NAME,
+        Key:b,
+        Body:a,
+        ACL:'public-read'
+        
+    }
+
+    s3bucket.upload(params,(err,s3response)=>{
+        if(!err)
+        {
+            resolve(s3response.Location)
+        }
+        else{
+            reject(err)
+        }
+    })
+
+    })
+    
+
+
+
+
+}
+
+exports.getAllfileUrlOfPast=async (req,res,next)=>{
+
+    const getAllUrlsOfPast=await req.user.getFileUrls()
+    res.send(getAllUrlsOfPast)
+}
 
 
 

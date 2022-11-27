@@ -1,7 +1,7 @@
 const sequelize=require('./database.js')
 const Sequelize=require('sequelize')
 
-const premium=sequelize.define('premium',{
+const Premium=sequelize.define('Premium',{
     id:
     {
         type:Sequelize.INTEGER,
@@ -17,4 +17,4 @@ const premium=sequelize.define('premium',{
 
     }
 })
-module.exports=premium
+module.exports=Premium
