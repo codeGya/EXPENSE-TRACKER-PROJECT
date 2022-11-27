@@ -74,14 +74,17 @@ async function displayAfterRefreshingPage(e){
     console.log(waitForGettingUserDataFromBackend,'after applying query page')
     let output=""
 
-    for(let i=0;i<waitForGettingUserDataFromBackend.data.length;i=i+1)
+    for(let i=0;i<waitForGettingUserDataFromBackend.data.data.length;i=i+1)
     {
-        output=output+`<li id=${waitForGettingUserDataFromBackend.data[i].id}>Description-${waitForGettingUserDataFromBackend.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data[i].spend} Details-${waitForGettingUserDataFromBackend.data[i].variety}
-        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data[i].id}") value=DELETE></li>`
+        output=output+`<li id=${waitForGettingUserDataFromBackend.data.data[i].id}>Description-${waitForGettingUserDataFromBackend.data.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data.data[i].spend} Details-${waitForGettingUserDataFromBackend.data.data[i].variety}
+        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data.data[i].id}") value=DELETE></li>`
 
 
     }
+    
     document.getElementById('oldexpenses').innerHTML=output
+
+    paginationFunctionAfterRefreshing( waitForGettingUserDataFromBackend.data.key)
 
 
 
@@ -274,6 +277,11 @@ async function checkWhetherPremiumOrNot()
         document.getElementById('downloadparticular').innerHTML=`<li><input type=button onclick=getAllFileUrl() value=DOWNLOADFILEURLS>`
 
 
+        document.getElementById('getOneUserData').innerHTML=`</li>  <li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("weekly") value=WEEKLY>`
+        document.getElementById('download').innerHTML=`<li><input type=button onclick=getDownloadFileUrl() value=DOWNLOAD>`
+        document.getElementById('downloadparticular').innerHTML=`<li><input type=button onclick=getAllFileUrl() value=DOWNLOADFILEURLS>`
+
+
 
     }
     if(waitForGettingPremiumDetails.status===400){
@@ -393,5 +401,47 @@ async function getAllFileUrl()
     }
     
     document.getElementById('getFileUrls').innerHTML=output
+
+}
+
+async function paginationFunctionAfterRefreshing(a)
+{
+
+    if(a.hasNextPage && a.hasLastPage && a.hasNextPage!=a.hasLastPage)
+    {
+        document.getElementById('buttonsofoldexpenses').innerHTML=`<input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>`
+    }
+    if(a.hasNextPage && a.hasLastPage && a.hasNextPage===a.hasLastPage)
+    {
+        document.getElementById('buttonsofoldexpenses').innerHTML=`<input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>  <input type=button onclick=getDataOfParticularPage("${a.lastPage}") value=${a.lastPage}>`
+
+    }
+
+}
+
+async function getDataOfParticularPage(a)
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+
+    const waitForGettingUserDataFromBackend=await axios.get(`http://18.181.246.36:3000/get-user/?page=${a}`,config)
+
+    let output=""
+
+    for(let i=0;i<waitForGettingUserDataFromBackend.data.data.length;i=i+1)
+    {
+        output=output+`<li id=${waitForGettingUserDataFromBackend.data.data[i].id}>Description-${waitForGettingUserDataFromBackend.data.data[i].description} Rs Spend-${waitForGettingUserDataFromBackend.data.data[i].spend} Details-${waitForGettingUserDataFromBackend.data.data[i].variety}
+        <input type=button onclick=deleteUserFromBackendAfterRefreshingPage("${waitForGettingUserDataFromBackend.data.data[i].id}") value=DELETE></li>`
+
+
+    }
+    document.getElementById('oldexpenses').innerHTML=output
+    paginationFunctionAfterRefreshing(waitForGettingUserDataFromBackend.data.key)
+
+    
 
 }
