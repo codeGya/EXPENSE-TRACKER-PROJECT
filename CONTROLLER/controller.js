@@ -1,6 +1,6 @@
 const User=require('../MODELS/usertable.js')
 
-const { Op } = require("sequelize")
+
 const AWS=require('aws-sdk')
 
 const bcrypt=require('bcrypt')
