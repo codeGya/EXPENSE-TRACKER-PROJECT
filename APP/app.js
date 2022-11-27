@@ -37,4 +37,9 @@ app.use(cors())
 
 app.use(router)
 
+app.use((req,res,next)=>{
+    //console.log(`FRONTEND/${req.url}`,'req.url...................')
+    res.sendFile(path.join(__dirname,'..',`FRONTEND`,`${req.url}`))
+})
+
 app.listen(3000)
