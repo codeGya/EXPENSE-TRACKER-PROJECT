@@ -3,7 +3,7 @@ const sequelize=require('./database.js')
 
 
 
-const forgotp=sequelize.define('forgotp',{
+const ForgotPassword=sequelize.define('ForgotPassword',{
     id:
     {
         type:Sequelize.STRING,
@@ -18,4 +18,4 @@ const forgotp=sequelize.define('forgotp',{
     }
 })
 
-module.exports=forgotp
+module.exports=ForgotPassword
