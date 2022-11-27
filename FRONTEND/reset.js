@@ -8,7 +8,7 @@ async function resetPassword(e)
         password:document.getElementById('password').value
 
     }
-    const waitForUpdatingPassword=await axios.post('http://54.250.204.251:3000/update/password',password)
+    const waitForUpdatingPassword=await axios.post('http://18.181.246.36:3000/update/password',password)
     console.log(waitForUpdatingPassword,'hey hello how are you')
     if(waitForUpdatingPassword.status===200)
     {
