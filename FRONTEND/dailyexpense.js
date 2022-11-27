@@ -270,6 +270,9 @@ async function checkWhetherPremiumOrNot()
         document.body.style.backgroundColor = "red";
         document.getElementById('premium').innerHTML=`<input type="button"  value="LEADERBOARD" onclick="getLeaderBoard()">`
         document.getElementById('getOneUserData').innerHTML=`<li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("daily") value=DAILY></li>  <li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("weekly") value=WEEKLY></li><li><input type=button onclick=getDataOfPremiumMemberForParticularDuration("monthly") value=MONTHLY></li>`
+        document.getElementById('download').innerHTML=`<li><input type=button onclick=getDownloadFileUrl() value=DOWNLOAD>`
+        document.getElementById('downloadparticular').innerHTML=`<li><input type=button onclick=getAllFileUrl() value=DOWNLOADFILEURLS>`
+
 
 
     }
