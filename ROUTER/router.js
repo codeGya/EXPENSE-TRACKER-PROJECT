@@ -17,7 +17,10 @@ router.post('/save/premium',authenticate.gettingToken,usertable.savePremiumDetai
 router.get('/get/premium/details',authenticate.gettingToken,usertable.checkWhetherPremium)
 router.get('/get/all/user',authenticate.gettingToken,usertable.getAllUserDetails)
 router.get('/one/particular/user/:emailId',authenticate.gettingToken,usertable.getDataOfOneParticularPersonFromDataBase)
-//router.get('/particular/data/:duration',authenticate.gettingToken,usertable.getDataOfParticularDuration)
+router.get('/particular/data/:duration',authenticate.gettingToken,usertable.getDataOfParticularDuration)
+router.get('/get/file/url',authenticate.gettingToken,usertable.downloadFileUrl)
+router.get('/get/file/all/url',authenticate.gettingToken,usertable.getAllfileUrlOfPast)
+
 
 
 module.exports=router
