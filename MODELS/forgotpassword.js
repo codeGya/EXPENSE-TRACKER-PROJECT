@@ -10,11 +10,8 @@ const forgotp=sequelize.define('forgotp',{
         allowNull:false,
         primaryKey:true
 
-    },
-    userId:{
-        type:Sequelize.INTEGER,
-        allowNull:false
-    },
+    }
+    ,
     isactive:
     {
         type:Sequelize.BOOLEAN
