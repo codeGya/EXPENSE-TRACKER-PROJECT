@@ -353,3 +353,42 @@ async function getDataOfPremiumMemberForParticularDuration(a)
 
 
 }
+async function getDownloadFileUrl()
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+    const waitForGettingUserFileData=await axios.get('http://18.181.246.36:3000/get/file/url',config)
+    if(waitForGettingUserFileData.status===200)
+    {
+        window.location.href=`${waitForGettingUserFileData.data}`
+    }
+
+}
+
+async function getAllFileUrl()
+{
+    const config = {
+        headers: {
+            header1:localStorage.getItem('token'),
+          }
+
+    }
+    const waitForGettingUserFileData=await axios.get('http://18.181.246.36:3000/get/file/all/url',config)
+    //const waitForGettingUserFileData=await axios.get('http://localhost:3000/get/file/all/url',config)
+    console.log( waitForGettingUserFileData,' waitForGettingUserFileData')
+    
+    let output=""
+    for(let i=0;i<waitForGettingUserFileData.data.length;i=i+1)
+    {
+        output=output+`<li id=${waitForGettingUserFileData.data[i].id}>File Urls-${waitForGettingUserFileData.data[i].fileurl}</li>`
+
+
+    }
+    
+    document.getElementById('getFileUrls').innerHTML=output
+
+}
