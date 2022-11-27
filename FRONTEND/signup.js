@@ -16,7 +16,7 @@ async function submitsignuppage(e)
 
     
     //console.log(userTable)
-    const waitForPostingDataToBackend=await axios.post('http://54.250.204.251:3000/post-user',userTable)
+    const waitForPostingDataToBackend=await axios.post('http://18.181.246.36:3000/post-user',userTable)
     
     document.getElementById('old').innerHTML=`<li>${waitForPostingDataToBackend.data}</li>`
 }

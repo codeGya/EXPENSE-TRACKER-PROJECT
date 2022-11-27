@@ -34,7 +34,7 @@ async function saveDailyExpensesToBackend()
       
    // 
 
-    const waitForPostingToBackend=await axios.post('http://54.250.204.251:3000/dailyexpenses-user',expenses,config)
+    const waitForPostingToBackend=await axios.post('http://18.181.246.36:3000/dailyexpenses-user',expenses,config)
 
     console.log(waitForPostingToBackend,'waitForPostingToBackend')
     
@@ -51,7 +51,7 @@ async function deleteUserFromBackend(a)
 
     }
     
-    const waitForDeletion=await axios.delete(`http://54.250.204.251:3000/delete-user/${a}`,config)
+    const waitForDeletion=await axios.delete(`http://18.181.246.36:3000/delete-user/${a}`,config)
 
     document.getElementById('expenses').removeChild(document.getElementById(a))
     //
@@ -72,7 +72,7 @@ async function displayAfterRefreshingPage(e){
     const pagination=localStorage.getItem('pagination')
     
 
-   const waitForGettingUserDataFromBackend=await axios.get(`http://54.250.204.251:3000/get-user/?page=${page}`,config)
+   const waitForGettingUserDataFromBackend=await axios.get(`http://18.181.246.36:3000/get-user/?page=${page}`,config)
     console.log(waitForGettingUserDataFromBackend,'after applying query page')
     let output=""
 
@@ -100,7 +100,7 @@ async function deleteUserFromBackendAfterRefreshingPage(a)
           }
 
     }
-    const waitForDeletion=await axios.delete(`http://54.250.204.251:3000/delete-user/${a}`,config)
+    const waitForDeletion=await axios.delete(`http://18.181.246.36:3000/delete-user/${a}`,config)
 
     document.getElementById('oldexpenses').removeChild(document.getElementById(a))
 
@@ -125,7 +125,7 @@ async function sendPremiumAccountDetails()
     }
         
 
-   const waitForId=await axios.post('http://54.250.204.251:3000/buy-premium',options,config)
+   const waitForId=await axios.post('http://18.181.246.36:3000/buy-premium',options,config)
    console.log(waitForId.data,waitForId.status,'wait for order id creation')
    if(waitForId.status===200)
    {
@@ -146,7 +146,7 @@ async function sendPremiumAccountDetails()
     order_id:`${localStorage.getItem('id')}`,
     handler: async function (response){
         console.log(response,'i am response')
-        await axios.post('http://54.250.204.251:3000/save/premium',information,config)
+        await axios.post('http://18.181.246.36:3000/save/premium',information,config)
         document.body.style.backgroundColor = "red";
         alert('Transaction Successful')
         
@@ -267,7 +267,7 @@ async function checkWhetherPremiumOrNot()
           }
 
     }
-    const waitForGettingPremiumDetails=await axios.get('http://54.250.204.251:3000/get/premium/details',config)
+    const waitForGettingPremiumDetails=await axios.get('http://18.181.246.36:3000/get/premium/details',config)
     //console.log(waitForGettingPremiumDetails)
 
     if(waitForGettingPremiumDetails.status===200)
@@ -306,7 +306,7 @@ async function getLeaderBoard()
     // if(waitForGettingPremiumDetails.status===200)
     // {
 
-        const waitForGettingAllUserDetails=await axios.get('http://54.250.204.251:3000/get/all/user',config)
+        const waitForGettingAllUserDetails=await axios.get('http://18.181.246.36:3000/get/all/user',config)
         let output=""
         for(let i=0;i<waitForGettingAllUserDetails.data.length;i=i+1)
         {
@@ -333,7 +333,7 @@ async function getDataOfThatParticularPerson(a)
     }
 
 
-    const getDataOfThatParticularPerson=await axios.get(`http://54.250.204.251:3000/one/particular/user/${a}`,config)
+    const getDataOfThatParticularPerson=await axios.get(`http://18.181.246.36:3000/one/particular/user/${a}`,config)
     console.log(getDataOfThatParticularPerson)
     let output=""
     for(let i=0;i<getDataOfThatParticularPerson.data.length;i=i+1)
@@ -357,7 +357,7 @@ async function getDataOfPremiumMemberForParticularDuration(a)
     }
 
 
-    const userDataForParticularDuration=await axios.get(`http://54.250.204.251:3000/particular/data/${a}`,config)
+    const userDataForParticularDuration=await axios.get(`http://18.181.246.36:3000/particular/data/${a}`,config)
     console.log(userDataForParticularDuration,'userDataForParticularDuration')
     let output=""
 
@@ -382,7 +382,7 @@ async function getDownloadFileUrl()
           }
 
     }
-    const waitForGettingUserFileData=await axios.get('http://54.250.204.251:3000/get/file/url',config)
+    const waitForGettingUserFileData=await axios.get('http://18.181.246.36:3000/get/file/url',config)
     if(waitForGettingUserFileData.status===200)
     {
         window.location.href=`${waitForGettingUserFileData.data}`
@@ -398,7 +398,7 @@ async function getAllFileUrl()
           }
 
     }
-    const waitForGettingUserFileData=await axios.get('http://54.250.204.251:3000/get/file/all/url',config)
+    const waitForGettingUserFileData=await axios.get('http://18.181.246.36:3000/get/file/all/url',config)
     //const waitForGettingUserFileData=await axios.get('http://localhost:3000/get/file/all/url',config)
     console.log( waitForGettingUserFileData,' waitForGettingUserFileData')
     
@@ -438,7 +438,7 @@ async function getDataOfParticularPage(a)
 
     }
 
-    const waitForGettingUserDataFromBackend=await axios.get(`http://54.250.204.251:3000/get-user/?page=${a}`,config)
+    const waitForGettingUserDataFromBackend=await axios.get(`http://18.181.246.36:3000/get-user/?page=${a}`,config)
 
     let output=""
 

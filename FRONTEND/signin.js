@@ -12,7 +12,7 @@ async function signInPageForUsers(e)
         email:email,
         password:password
     }
-    const waitForLoggingIn=await axios.post('http://54.250.204.251:3000/sign-user',userTable)
+    const waitForLoggingIn=await axios.post('http://18.181.246.36:3000/sign-user',userTable)
    console.log(waitForLoggingIn,'i want to generate token')
     //if()
     console.log(waitForLoggingIn)
