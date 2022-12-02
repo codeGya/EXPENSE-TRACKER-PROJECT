@@ -361,6 +361,16 @@ async function getDataOfPremiumMemberForParticularDuration(a)
 
 
     const userDataForParticularDuration=await axios.get(`http://18.181.246.36:3000/particular/data/${a}`,config)
+    let output=""
+
+    for(let i=0;i<userDataForParticularDuration.data.length;i=i+1)
+    {
+        output=output+`<li id=${userDataForParticularDuration.data[i].id}> Spend of ${userDataForParticularDuration.data[i].createdAt} => Description-${userDataForParticularDuration.data[i].description} Rs Spend-${userDataForParticularDuration.data[i].spend} Details-${userDataForParticularDuration.data[i].variety}</li>`
+
+
+    }
+    document.getElementById('particularDuration').innerHTML=output
+
 
 
 }
